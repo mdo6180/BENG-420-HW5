@@ -1,2 +1,3 @@
 # BENG-420-HW5
-Clustering algorithm
+
+Using SVM classifier on Microarray data and diabetes dataset
