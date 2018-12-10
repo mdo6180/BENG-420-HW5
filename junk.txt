@@ -1,0 +1,76 @@
+working_data = [data.Tumor27  data.Tumor29   data.Tumor34  data.Tumor28 ...
+                data.Tumor35  data.Tumor8    data.Tumor3   data.Tumor9 ...
+                data.Tumor4   data.Tumor32   data.Tumor39  data.Tumor10 ...
+                data.Tumor33  data.Tumor5    data.Tumor11  data.Tumor6 ...
+                data.Tumor12  data.Tumor40 ...
+                data.Normal27 data.Normal29  data.Normal34 data.Normal28 ...
+                data.Normal35 data.Normal8   data.Normal3  data.Normal9 ...
+                data.Normal4  data.Normal32  data.Normal39 data.Normal10 ...
+                data.Normal33 data.Normal5   data.Normal11 data.Normal6 ...
+                data.Normal12 data.Normal40];
+				
+				
+				
+				
+model = 
+
+  struct with fields:
+
+    Parameters: [5×1 double]
+      nr_class: 2
+       totalSV: 28
+           rho: 5.2272
+         Label: [2×1 double]
+    sv_indices: [28×1 double]
+         ProbA: []
+         ProbB: []
+           nSV: [2×1 double]
+       sv_coef: [28×1 double]
+           SVs: [28×2 double]
+		   
+		   
+		   
+		   
+model = 
+
+  struct with fields:
+
+    Parameters: [5×1 double]
+      nr_class: 2
+       totalSV: 0
+           rho: [0×1 double]
+         Label: 0
+    sv_indices: [0×1 double]
+         ProbA: []
+         ProbB: []
+           nSV: 0
+       sv_coef: []
+           SVs: [0×10 double]
+		   
+		   
+		   
+		   
+C = 0.1;    % setting the cost
+
+% linear SVM classifier
+model = svmtrain(class_labels, features, sprintf('-s 0 -t 0 -c %g', C));
+model.nr_class = 2;
+
+
+
+
+% leave-1-out cross validation
+for i = 1:length(y)
+    leave_out_x = x(i,:);
+    leave_out_y = y(i);
+    
+    x(i,:) = [];
+    y(i) = [];
+    
+    svmtrain(y, x, sprintf('-s 0 -t 0 -c %g', C));
+    
+end
+
+a = x(1,:)
+x(1,:) = []
+x = [a; x]
