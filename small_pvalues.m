@@ -1,12 +1,12 @@
 clear
 close all
 
-% read in presorted table
+% read pre-sorted excel table (use smallest 10 p-values)
 % remove 'Sample column'
-% feature 'T87871' appears twice, so I am removing one of them
+% feature 'T87871' appears twice, so I am removing one of them at row 9
 % removing 'AccessionNumber' and 'Description' column
 % convert to array
-% transpose matrix so each row is an instance, each column is a feature
+% transpose matrix so each row is an instance and each column is a feature
 data = readtable('CarcinomaNormalDataset.xls','Sheet','Cancer','Range','A1:AM12');
 data = removevars(data,{'Sample'});      
 data(9,:) = [];     
