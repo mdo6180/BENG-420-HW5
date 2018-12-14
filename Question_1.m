@@ -10,7 +10,7 @@ close all
 % -t: 0 = linear kernel, 1 = polynomial, 2 = Gaussian, 3 = sigmoid 
 
 % leave-1-out cross validation
-mse1 = 0;    % sum of mean square error every run
+mse1 = 0;    % mean sum of square error every run
 for i = 1:length(y)
     leave_out_x = x(i,:);
     leave_out_y = y(i);
