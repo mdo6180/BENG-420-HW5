@@ -6,18 +6,8 @@ close all
 %[y, x] = libsvmread('data_largest.txt');
 
 % Libsvm options
-% -s: 0 = classification
-% -t: 2 = Gaussian kernel, 0 = linear kernel
-% -g : gamma in the Gaussian kernel
-% -c : cost
-
-% Set the cost
-C = 30; %30 vs 10000 vs 5 vs 0.02
-linear_model = svmtrain(y, x, sprintf('-s 0 -t 0 -c %g', C));
-
-% Set gamma
-gamma = 10000;
-gaussian_model = svmtrain(y, x, sprintf('-s 0 -t 2 -g %g', gamma));
+% -s: 0 = multi-class classification
+% -t: 0 = linear kernel, 1 = polynomial, 2 = Gaussian, 3 = sigmoid 
 
 % leave-1-out cross validation
 mse1 = 0;    % sum of mean square error every run
@@ -28,9 +18,10 @@ for i = 1:length(y)
     x(i,:) = [];
     y(i) = [];
     
-    %cv_linear_model = svmtrain(y, x, sprintf('-s 0 -t 0 -c %g', C));
-    cv_gaussian_model = svmtrain(y, x, sprintf('-s 0 -t 2 -g %g', gamma));
+    linear_model = svmtrain(y, x, sprintf('-s 0 -t 0'));    % train linear classifier
     [predict_label, accuracy, dec_values] = svmpredict(leave_out_y, leave_out_x, linear_model);
+%     gaussian_model = svmtrain(y, x, sprintf('-s 0 -t 2'));    % train gaussian classifier
+%     [predict_label, accuracy, dec_values] = svmpredict(leave_out_y, leave_out_x, gaussian_model);
     
     error = (leave_out_y - predict_label)^2;
     
@@ -50,10 +41,11 @@ for i = 1:(length(y) - 10)
     x(i:(i + 9),:) = [];
     y(i:(i + 9)) = [];
     
-    %cv_linear_model = svmtrain(y, x, sprintf('-s 0 -t 0 -c %g', C));
-    cv_gaussian_model = svmtrain(y, x, sprintf('-s 0 -t 2 -g %g', gamma));
+    linear_model = svmtrain(y, x, sprintf('-s 0 -t 0'));
     [predict_label, accuracy, dec_values] = svmpredict(leave_out_y, leave_out_x, linear_model);
-    
+%     gaussian_model = svmtrain(y, x, sprintf('-s 0 -t 2'));
+%     [predict_label, accuracy, dec_values] = svmpredict(leave_out_y, leave_out_x, gaussian_model);
+     
     error = sum((leave_out_y - predict_label).^2);
     
     mse10 = mse10 + error;
