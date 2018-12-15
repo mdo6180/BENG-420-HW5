@@ -2,8 +2,8 @@ clear
 close all
 
 % Load training features and labels
-%[y, x] = libsvmread('data_smallest.txt');
-[y, x] = libsvmread('data_largest.txt');
+[y, x] = libsvmread('data_smallest.txt');
+%[y, x] = libsvmread('data_largest.txt');
 
 % Libsvm options
 % -s: 0 = multi-class classification
@@ -43,7 +43,7 @@ for i = 1:(length(y) - 10)
     
 %     linear_model = svmtrain(y, x, sprintf('-s 0 -t 0'));
 %     [predict_label, accuracy, dec_values] = svmpredict(leave_out_y, leave_out_x, linear_model);
-    gaussian_model = svmtrain(y, x, sprintf('-s 0 -t 2'));
+    gaussian_model = svmtrain(y, x, sprintf('-s 0 -t 2'));  % train linear classifier
     [predict_label, accuracy, dec_values] = svmpredict(leave_out_y, leave_out_x, gaussian_model);
      
     error = sum((leave_out_y - predict_label).^2);

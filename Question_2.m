@@ -47,26 +47,48 @@ classifier2 = svmtrain(y_train, x_train, sprintf('-s 0 -t 2 -g %d -c %d', gamma2
 % -------------------------------------------------------------------------
 
 % d:-----------------------------------------------------------------------
-optimal_gamma = 0;
-optimal_C = 0;
-highest_accuracy = 0;
-for i = 0.1:0.5:10      % range of gamma
-    for j = 0.1:0.1:2   % range of C
-        
-        model = svmtrain(y_train, x_train, sprintf('-s 0 -t 2 -g %d -c %d -h 0', i, j));
-        [predict_label_model, accuracy_model, dec_values_model] = svmpredict(y_test, x_test, model);
-        
-        if accuracy_model(1) > highest_accuracy
-            highest_accuracy = accuracy_model(1);
-            optimal_gamma = i;
-            optimal_C = j;
-        end
-        
-    end
-end
-
+% optimal_gamma = 0;
+% optimal_C = 0;
+% highest_accuracy = 0;
+% for i = 0.1:0.5:10      % range of gamma
+%     for j = 0.1:0.1:2   % range of C
+%         
+%         model = svmtrain(y_train, x_train, sprintf('-s 0 -t 2 -g %d -c %d -h 0', i, j));
+%         [predict_label_model, accuracy_model, dec_values_model] = svmpredict(y_test, x_test, model);
+%         
+%         if accuracy_model(1) > highest_accuracy
+%             highest_accuracy = accuracy_model(1);
+%             optimal_gamma = i;
+%             optimal_C = j;
+%         end
+%         
+%     end
+% end
+% 
 model_train = svmtrain(y_train, x_train, sprintf('-s 0 -t 2 -g %d -c %d -h 0', 9.6, 2));
 [predict_labels_train, accuracy_train, dec_values_train] = svmpredict(y_train, x_train, model_train);
 % -------------------------------------------------------------------------
 
 % e:-----------------------------------------------------------------------
+training_features = full(x_train)';
+training_labels = y_train';
+training_labels(training_labels >= 0) = 1;
+training_labels(training_labels < 0) = 0;
+
+testing_features = full(x_test)';
+testing_labels = y_test';
+testing_labels(testing_labels >= 0) = 1;
+testing_labels(testing_labels < 0) = 0;
+
+net = feedforwardnet(4);
+%net = linearlayer;
+net = train(net, training_features, training_labels);
+predicted_labels = net(testing_features);
+
+predicted_labels(predicted_labels >= 0) = 1;
+predicted_labels(predicted_labels < 0) = 0;
+
+perf = perform(net, predicted_labels, testing_labels);
+
+figure(1)
+plotconfusion(testing_labels, predicted_labels)
