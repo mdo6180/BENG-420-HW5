@@ -10,7 +10,7 @@ close all
 % -t: 0 = linear kernel, 1 = polynomial, 2 = Gaussian, 3 = sigmoid 
 
 % leave-1-out cross validation
-mse1 = 0;    % mean sum of square error every run
+avg_sse1 = 0;
 for i = 1:length(y)
     leave_out_x = x(i,:);
     leave_out_y = y(i);
@@ -18,22 +18,24 @@ for i = 1:length(y)
     x(i,:) = [];
     y(i) = [];
     
+    % uncomment lines 22 and 23 to run linear model
 %     linear_model = svmtrain(y, x, sprintf('-s 0 -t 0'));    % train linear classifier
 %     [predict_label, accuracy, dec_values] = svmpredict(leave_out_y, leave_out_x, linear_model);
+
+    % uncomment lines 26 and 27 to run gaussian model
     gaussian_model = svmtrain(y, x, sprintf('-s 0 -t 2'));    % train gaussian classifier
     [predict_label, accuracy, dec_values] = svmpredict(leave_out_y, leave_out_x, gaussian_model);
     
-    error = (leave_out_y - predict_label)^2;
-    
-    mse1 = mse1 + error;
+    sse1 = (leave_out_y - predict_label)^2;
+    avg_sse1 = avg_sse1 + sse1;
     
     x = [leave_out_x; x];
     y = [leave_out_y; y];
 end
-mse1 = 100*(mse1/length(y))
+avg_sse1 = avg_sse1/length(y)   % average sum-square-error for all runs
 
 % leave-10-out cross validation
-mse10 = 0;    % sum of mean square error every run
+avg_sse10 = 0;    % sum of mean square error every run
 for i = 1:(length(y) - 10)
     leave_out_x = x(i:(i + 9),:);
     leave_out_y = y(i:(i + 9));
@@ -41,18 +43,19 @@ for i = 1:(length(y) - 10)
     x(i:(i + 9),:) = [];
     y(i:(i + 9)) = [];
     
-%     linear_model = svmtrain(y, x, sprintf('-s 0 -t 0'));
+    % uncomment lines 47 and 48 to run linear model
+%     linear_model = svmtrain(y, x, sprintf('-s 0 -t 0'));    % train linear classifier
 %     [predict_label, accuracy, dec_values] = svmpredict(leave_out_y, leave_out_x, linear_model);
-    gaussian_model = svmtrain(y, x, sprintf('-s 0 -t 2'));  % train linear classifier
+
+    % uncomment lines 51 and 52 to run gaussian model
+    gaussian_model = svmtrain(y, x, sprintf('-s 0 -t 2'));  % train gaussian classifier
     [predict_label, accuracy, dec_values] = svmpredict(leave_out_y, leave_out_x, gaussian_model);
-     
-    error = sum((leave_out_y - predict_label).^2);
     
-    mse10 = mse10 + error;
+    sse10 = sum((leave_out_y - predict_label).^2);   % sum-squared-error
+    
+    avg_sse10 = avg_sse10 + sse10;  
     
     x = [leave_out_x; x];
     y = [leave_out_y; y];
 end
-mse10 = 100*(mse10/length(y))
-
-% [train, test] = crossvalind('LeaveMOut',x,1)
+avg_sse10 = avg_sse10/length(y)     % average sum-squared-error for all runs
